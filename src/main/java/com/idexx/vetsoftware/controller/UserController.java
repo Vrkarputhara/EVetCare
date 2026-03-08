@@ -60,7 +60,7 @@ public class UserController {
         return ResponseEntity.ok(userRepository.findAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> getUserById(@PathVariable Long id, Principal principal) {
         Optional<User> optionalUser = userRepository.findById(id);
