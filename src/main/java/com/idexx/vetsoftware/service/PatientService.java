@@ -26,7 +26,7 @@ public class PatientService {
 
     
     @Autowired
-    public PatientService(PatientRepository patientRepository, EventProducer eventProducer, CustomMetrics customMetrics) {
+    public PatientService(PatientRepository patientRepository,@Autowired(required = false) EventProducer eventProducer, CustomMetrics customMetrics) {
         this.patientRepository = patientRepository;
         this.eventProducer = eventProducer;
         this.customMetrics = customMetrics;
@@ -45,7 +45,9 @@ public class PatientService {
             savedPatient.getName(),
             savedPatient.getOwner().getId()
         );
-        eventProducer.sendPatientEvent(event);
+        if (eventProducer != null) {
+        	eventProducer.sendPatientEvent(event);
+        }
         
         return savedPatient;
     }
@@ -75,7 +77,9 @@ public class PatientService {
             null,
             null
         );
-        eventProducer.sendPatientEvent(event);
+        if (eventProducer != null) {
+        	eventProducer.sendPatientEvent(event);
+        }
     }
     
     @CacheEvict(value = "patients", key = "#id")
@@ -99,7 +103,9 @@ public class PatientService {
                     updatedPatient.getName(),
                     updatedPatient.getOwner().getId()
                 );
-                eventProducer.sendPatientEvent(event);
+                if (eventProducer != null) {
+                	eventProducer.sendPatientEvent(event);
+                }
                 
                 return updatedPatient;
             })
