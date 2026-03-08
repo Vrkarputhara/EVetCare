@@ -12,3 +12,6 @@ target/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Ignore sensitive properties
+src/main/resources/application.properties
