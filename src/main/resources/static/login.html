@@ -3,29 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - EVetCare</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <title>EVetCare - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         :root {
             --primary-gradient: linear-gradient(135deg, #2E7D32 0%, #66BB6A 100%);
             --secondary-gradient: linear-gradient(135deg, #1976D2 0%, #42A5F5 100%);
-            --accent-orange: #FF9800;
-            --accent-orange-light: #FFB74D;
-            --bg-light: #f8f9fa;
-            --bg-white: #ffffff;
-            --text-primary: #212121;
-            --text-secondary: #757575;
-            --border-color: #e0e0e0;
+            --accent-gradient: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
             --glass-bg: rgba(255, 255, 255, 0.85);
             --glass-border: rgba(255, 255, 255, 0.3);
             --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -184,14 +170,14 @@
             }
         }
 
-        /* Glassmorphism card */
+        /* Glassmorphism card - INCREASED WIDTH */
         .glass-card {
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
-            padding: 48px 40px;
+            padding: 48px 60px;
             box-shadow: 
                 0 8px 32px rgba(31, 38, 135, 0.15),
                 inset 0 1px 0 rgba(255, 255, 255, 0.5);
@@ -200,6 +186,9 @@
             overflow: hidden;
             animation: slideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+            max-width: 600px;
+            min-width: 480px;
         }
 
         .glass-card::before {
@@ -748,10 +737,20 @@
         }
 
         /* Responsive design */
+        @media (max-width: 768px) {
+            .glass-card {
+                padding: 40px 35px;
+                max-width: 500px;
+                min-width: 420px;
+            }
+        }
+
         @media (max-width: 576px) {
             .glass-card {
                 padding: 32px 24px;
                 margin: 10px;
+                max-width: 100%;
+                min-width: 320px;
             }
 
             .brand-name {
@@ -785,6 +784,7 @@
         @media (max-width: 380px) {
             .glass-card {
                 padding: 24px 20px;
+                min-width: 300px;
             }
 
             .brand-name {
@@ -967,7 +967,7 @@
             }, 1000);
         });
 
-        // Toggle password visibility (existing logic preserved)
+        // Toggle password visibility
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const passwordIcon = document.getElementById('passwordIcon');
@@ -983,7 +983,7 @@
             }
         }
 
-        // Social login handler (existing logic preserved)
+        // Social login handler
         function socialLogin(provider) {
             const alertContainer = document.getElementById('alertContainer');
             const providerIcons = {
@@ -1027,7 +1027,12 @@
             });
         });
 
-        // Form submission (existing logic preserved)
+        // Detect environment automatically
+        const API_BASE = window.location.hostname === "localhost"
+            ? "http://localhost:8080"
+            : "https://evetcare.onrender.com";
+
+        // Form submission
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -1035,14 +1040,15 @@
             const password = document.getElementById('password').value;
             const alertContainer = document.getElementById('alertContainer');
 
-            // Show loading state
             const submitBtn = this.querySelector('.btn-premium');
             const originalText = submitBtn.textContent;
+
+            // Loading state
             submitBtn.innerHTML = '<i class="bi bi-arrow-repeat me-2"></i>Signing In...';
             submitBtn.disabled = true;
 
             try {
-                const response = await fetch("http://localhost:8080/api/vetusers/login", {
+                const response = await fetch(`${API_BASE}/api/vetusers/login`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -1056,11 +1062,12 @@
                 const data = await response.json();
 
                 if (response.ok) {
+                    // Save JWT
                     localStorage.setItem("jwtToken", data.message);
 
                     // Success animation
                     document.querySelector('.glass-card').classList.add('success-animation');
-                    
+
                     alertContainer.innerHTML = `
                         <div class="alert-custom">
                             <i class="bi bi-check-circle-fill me-2"></i>
@@ -1076,24 +1083,24 @@
                     alertContainer.innerHTML = `
                         <div class="alert-custom">
                             <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                            ${data.message}
+                            ${data.message || "Invalid username or password"}
                         </div>
                     `;
-                    
-                    // Reset button
+
                     submitBtn.textContent = originalText;
                     submitBtn.disabled = false;
                 }
 
             } catch (error) {
+                console.error("Login error:", error);
+
                 alertContainer.innerHTML = `
                     <div class="alert-custom">
                         <i class="bi bi-x-circle-fill me-2"></i>
-                        Server error. Please try again.
+                        Cannot connect to server. Please try again.
                     </div>
                 `;
-                
-                // Reset button
+
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
             }
