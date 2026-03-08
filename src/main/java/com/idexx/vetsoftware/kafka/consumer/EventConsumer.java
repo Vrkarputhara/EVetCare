@@ -2,6 +2,7 @@ package com.idexx.vetsoftware.kafka.consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +10,7 @@ import com.idexx.vetsoftware.dto.AppointmentDto;
 import com.idexx.vetsoftware.dto.PatientDto;
 
 @Service
+@Profile("!Prod")
 public class EventConsumer {
     private static final Logger logger = LoggerFactory.getLogger(EventConsumer.class);
     
