@@ -27,7 +27,7 @@ public class AppointmentService {
         AppointmentRepository appointmentRepository, 
         PatientRepository patientRepository,
         UserRepository userRepository,
-        EventProducer eventProducer
+        @Autowired(required = false) EventProducer eventProducer
     ) {
         this.appointmentRepository = appointmentRepository;
         this.patientRepository = patientRepository;
@@ -55,7 +55,9 @@ public class AppointmentService {
             savedAppointment.getVet().getId(),
             savedAppointment.getStartTime()
         );
-        eventProducer.sendAppointmentEvent(event);
+        if (eventProducer != null) {
+        	eventProducer.sendAppointmentEvent(event);
+        }
         
         return savedAppointment;
     }
@@ -87,7 +89,9 @@ public class AppointmentService {
             null,
             null
         );
-        eventProducer.sendAppointmentEvent(event);
+        if (eventProducer != null) {
+        	eventProducer.sendAppointmentEvent(event);
+        }
     }
     
     public Appointment updateAppointment(Long id, Appointment appointmentDetails) {
@@ -111,7 +115,9 @@ public class AppointmentService {
                     updatedAppointment.getVet().getId(),
                     updatedAppointment.getStartTime()
                 );
-                eventProducer.sendAppointmentEvent(event);
+                if (eventProducer != null) {
+                	eventProducer.sendAppointmentEvent(event);
+                }
                 
                 return updatedAppointment;
             })
