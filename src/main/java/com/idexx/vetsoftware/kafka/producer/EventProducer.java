@@ -3,6 +3,7 @@ package com.idexx.vetsoftware.kafka.producer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import com.idexx.vetsoftware.dto.PatientDto;
 import com.idexx.vetsoftware.dto.UserInfoResponse;
 
 @Service
+@Profile("!Prod")
 public class EventProducer {
     private static final Logger logger = LoggerFactory.getLogger(EventProducer.class);
     

@@ -52,7 +52,7 @@ public class UserService implements UserDetailsService {
         PasswordEncoder passwordEncoder,
         @Lazy AuthenticationManager authenticationManager,
         JwtService jwtService,
-        EventProducer eventProducer
+        @Autowired(required = false) EventProducer eventProducer
     ) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -117,7 +117,9 @@ public class UserService implements UserDetailsService {
             savedUser.getUsername(),
             savedUser.getEmail()
         );
-        eventProducer.sendUserEvent(event);
+        if(eventProducer != null){
+        	 eventProducer.sendUserEvent(event);
+        }
 
         return savedUser;
     }
@@ -166,7 +168,10 @@ public class UserService implements UserDetailsService {
             user.getUsername(),
             user.getEmail()
         );
-        eventProducer.sendUserEvent(event);
+        if(eventProducer != null){
+        	eventProducer.sendUserEvent(event);
+        }
+        
     }
 
     public User updateUser(Long id, User userDetails) {
@@ -195,7 +200,9 @@ public class UserService implements UserDetailsService {
                     updatedUser.getUsername(),
                     updatedUser.getEmail()
                 );
-                eventProducer.sendUserEvent(event);
+                if(eventProducer != null){
+                	eventProducer.sendUserEvent(event);
+                }
 
                 return updatedUser;
             })
