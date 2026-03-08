@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - EVetCare</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+   <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        --primary-gradient: linear-gradient(135deg, #2E7D32 0%, #43A047 50%, #66BB6A 100%);
+        --secondary-gradient: linear-gradient(135deg, #1976D2 0%, #2196F3 50%, #42A5F5 100%);
+        --accent-gradient: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+        --glass-bg: rgba(255, 255, 255, 0.08);
+        --glass-border: rgba(255, 255, 255, 0.15);
+        --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+        --sidebar-width: 280px;
+        --text-primary: #263238;
+        --text-secondary: #546E7A;
+        --accent: #FF9800;
+        --accent-light: #FFB74D;
+        --success: #4CAF50;
+        --warning: #FFC107;
+        --danger: #F44336;
+        --info: #2196F3;
+        --light-bg: #F5F7FA;
+        --card-bg: #FFFFFF;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--light-bg);
+        min-height: 100vh;
+        color: var(--text-primary);
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: var(--sidebar-width);
+        background: var(--primary-gradient);
+        padding: 32px 24px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s ease;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-header {
+        margin-bottom: 48px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        color: white;
+    }
+
+    .logo-icon {
+        width: 48px;
+        height: 48px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo-icon i {
+        font-size: 24px;
+        color: white;
+    }
+
+    .logo-text {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .sidebar-nav {
+        list-style: none;
+        padding: 0;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .sidebar-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 14px 20px;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .sidebar-nav-link::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 3px;
+        background: var(--accent);
+        transform: scaleY(0);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar-nav-link:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        transform: translateX(5px);
+    }
+
+    .sidebar-nav-link.active {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+
+    .sidebar-nav-link.active::before {
+        transform: scaleY(1);
+    }
+
+    .sidebar-nav-link i {
+        font-size: 20px;
+        width: 24px;
+    }
+
+    /* User profile section */
+    .user-profile {
+        padding-top: 24px;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 16px;
+        color: white;
+    }
+
+    .user-info {
+        flex-grow: 1;
+    }
+
+    .user-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 2px;
+    }
+
+    .user-role {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .logout-btn {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .logout-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
+    /* Main content */
+    .main-content {
+        margin-left: var(--sidebar-width);
+        padding: 32px;
+        min-height: 100vh;
+        position: relative;
+    }
+
+    /* Header */
+    .page-header {
+        margin-bottom: 40px;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .page-title {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+        color: var(--text-primary);
+    }
+
+    .page-subtitle {
+        color: var(--text-secondary);
+        font-size: 16px;
+    }
+
+    /* Stats cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 24px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 28px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        animation: fadeInUp 0.6s ease-out;
+        animation-fill-mode: both;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--primary-gradient);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .stat-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-icon.primary {
+        background: var(--primary-gradient);
+    }
+
+    .stat-icon.secondary {
+        background: var(--secondary-gradient);
+    }
+
+    .stat-icon.accent {
+        background: var(--accent-gradient);
+    }
+
+    .stat-icon.success {
+        background: linear-gradient(135deg, #4CAF50, #8BC34A);
+    }
+
+    .stat-icon i {
+        font-size: 28px;
+        color: white;
+    }
+
+    .stat-value {
+        font-size: 36px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: var(--text-primary);
+    }
+
+    .stat-label {
+        color: var(--text-secondary);
+        font-size: 14px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-change {
+        position: absolute;
+        top: 28px;
+        right: 28px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .stat-change.positive {
+        background: rgba(76, 175, 80, 0.1);
+        color: var(--success);
+    }
+
+    .stat-change.negative {
+        background: rgba(244, 67, 54, 0.1);
+        color: var(--danger);
+    }
+
+    /* Table section */
+    .table-section {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 32px;
+        animation: fadeInUp 0.8s ease-out 0.5s both;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .section-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .btn-view-all {
+        background: var(--primary-gradient);
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+    }
+
+    .btn-view-all:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
+    }
+
+    /* Table styling */
+    .table-custom {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .table-custom thead th {
+        background: rgba(46, 125, 50, 0.05);
+        padding: 16px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .table-custom thead th:first-child {
+        border-top-left-radius: 12px;
+    }
+
+    .table-custom thead th:last-child {
+        border-top-right-radius: 12px;
+    }
+
+    .table-custom tbody td {
+        padding: 20px 16px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    .table-custom tbody tr {
+        transition: all 0.3s ease;
+    }
+
+    .table-custom tbody tr:hover {
+        background: rgba(46, 125, 50, 0.03);
+    }
+
+    .table-custom tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .patient-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .patient-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--primary-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 14px;
+        color: white;
+    }
+
+    .patient-details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .patient-name {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 2px;
+    }
+
+    .patient-species {
+        font-size: 12px;
+        color: var(--text-secondary);
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-badge.confirmed {
+        background: rgba(76, 175, 80, 0.1);
+        color: var(--success);
+    }
+
+    .status-badge.pending {
+        background: rgba(255, 193, 7, 0.1);
+        color: var(--warning);
+    }
+
+    .status-badge.cancelled {
+        background: rgba(244, 67, 54, 0.1);
+        color: var(--danger);
+    }
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    /* Mobile menu toggle */
+    .mobile-menu-toggle {
+        display: none;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1001;
+        background: var(--primary-gradient);
+        color: white;
+        padding: 12px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+    }
+
+    .mobile-menu-toggle:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
+    }
+
+    /* Responsive design */
+    @media (max-width: 1024px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+        }
+
+        .sidebar.mobile-show {
+            transform: translateX(0);
+        }
+
+        .main-content {
+            margin-left: 0;
+            padding: 20px;
+        }
+
+        .mobile-menu-toggle {
+            display: block;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-title {
+            font-size: 24px;
+        }
+
+        .table-section {
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+    }
+
+    /* Loading animation */
+    .loading-skeleton {
+        background: linear-gradient(90deg, 
+            rgba(0, 0, 0, 0.05) 25%, 
+            rgba(0, 0, 0, 0.1) 50%, 
+            rgba(0, 0, 0, 0.05) 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+    }
+
+    @keyframes loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+</style>
+</head>
+<body>
+    <!-- Mobile menu toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="bi bi-list" style="font-size: 20px;"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-logo">
+                <div class="logo-icon">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                </div>
+                <span class="logo-text">EVetCare</span>
+            </a>
+        </div>
+
+        <nav>
+            <ul class="sidebar-nav">
+                <li>
+                    <a href="dashboard.html" class="sidebar-nav-link active">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="patients.html" class="sidebar-nav-link">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Patients</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="appointments.html" class="sidebar-nav-link">
+                        <i class="bi bi-calendar-check-fill"></i>
+                        <span>Appointments</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="sidebar-nav-link">
+                        <i class="bi bi-file-medical-fill"></i>
+                        <span>Medical Records</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="sidebar-nav-link">
+                        <i class="bi bi-capsule"></i>
+                        <span>Pharmacy</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="sidebar-nav-link">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="sidebar-nav-link">
+                        <i class="bi bi-gear-fill"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="user-profile">
+            <div class="user-avatar">JD</div>
+            <div class="user-info">
+                <div class="user-name">Dr. John Doe</div>
+                <div class="user-role">Administrator</div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+        <!-- Page header -->
+        <header class="page-header">
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-subtitle">Welcome back! Here's what's happening at your clinic today.</p>
+        </header>
+
+        <!-- Stats cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon primary">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div class="stat-value">1,248</div>
+                <div class="stat-label">Total Patients</div>
+                <span class="stat-change positive">
+                    <i class="bi bi-arrow-up"></i> 12%
+                </span>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon primary">
+                    <i class="bi bi-calendar-check-fill"></i>
+                </div>
+                <div class="stat-value">42</div>
+                <div class="stat-label">Today's Appointments</div>
+                <span class="stat-change positive">
+                    <i class="bi bi-arrow-up"></i> 8%
+                </span>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon primary">
+                    <i class="bi bi-currency-dollar"></i>
+                </div>
+                <div class="stat-value">$8,420</div>
+                <div class="stat-label">Monthly Revenue</div>
+                <span class="stat-change negative">
+                    <i class="bi bi-arrow-down"></i> 3%
+                </span>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon primary">
+                    <i class="bi bi-box-seam-fill"></i>
+                </div>
+                <div class="stat-value">15</div>
+                <div class="stat-label">Low Stock Items</div>
+                <span class="stat-change positive">
+                    <i class="bi bi-arrow-down"></i> 5%
+                </span>
+            </div>
+        </div>
+
+        <!-- Recent appointments table -->
+        <section class="table-section">
+            <div class="section-header">
+                <h2 class="section-title">Recent Appointments</h2>
+                <a href="appointments.html" class="btn-view-all">
+                    View All
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Owner</th>
+                            <th>Time</th>
+                            <th>Vet</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointmentsTableBody">
+                        <!-- Table rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-show');
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Mock data for appointments
+        const appointments = [
+            { 
+                id: 1, 
+                patient: 'Buddy', 
+                species: 'Dog', 
+                owner: 'John Doe', 
+                time: '09:00 AM', 
+                vet: 'Dr. Alice',
+                status: 'confirmed'
+            },
+            { 
+                id: 2, 
+                patient: 'Luna', 
+                species: 'Cat', 
+                owner: 'Jane Smith', 
+                time: '10:30 AM', 
+                vet: 'Dr. Bob',
+                status: 'pending'
+            },
+            { 
+                id: 3, 
+                patient: 'Charlie', 
+                species: 'Dog', 
+                owner: 'Peter Jones', 
+                time: '11:00 AM', 
+                vet: 'Dr. Alice',
+                status: 'confirmed'
+            },
+            { 
+                id: 4, 
+                patient: 'Lucy', 
+                species: 'Cat', 
+                owner: 'Mary Johnson', 
+                time: '02:00 PM', 
+                vet: 'Dr. Carol',
+                status: 'cancelled'
+            },
+            { 
+                id: 5, 
+                patient: 'Max', 
+                species: 'Dog', 
+                owner: 'David Wilson', 
+                time: '03:30 PM', 
+                vet: 'Dr. Bob',
+                status: 'confirmed'
+            }
+        ];
+
+        // Function to populate the appointments table
+        function populateAppointmentsTable() {
+            const tableBody = document.getElementById('appointmentsTableBody');
+            tableBody.innerHTML = '';
+
+            appointments.forEach(apt => {
+                const statusClass = apt.status;
+                const statusText = apt.status.charAt(0).toUpperCase() + apt.status.slice(1);
+                
+                const row = `
+                    <tr>
+                        <td>
+                            <div class="patient-info">
+                                <div class="patient-avatar">${apt.patient[0]}</div>
+                                <div class="patient-details">
+                                    <span class="patient-name">${apt.patient}</span>
+                                    <span class="patient-species">${apt.species}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${apt.owner}</td>
+                        <td>${apt.time}</td>
+                        <td>${apt.vet}</td>
+                        <td>
+                            <span class="status-badge ${statusClass}">
+                                <span class="status-dot"></span>
+                                ${statusText}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        // Animate numbers on load
+        function animateValue(element, start, end, duration) {
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    element.textContent = end.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current).toLocaleString();
+                }
+            }, 16);
+        }
+
+        // Initialize animations when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            populateAppointmentsTable();
+            
+            // Animate stat values
+            const statValues = document.querySelectorAll('.stat-value');
+            statValues.forEach((element, index) => {
+                const endValue = parseInt(element.textContent.replace(/[^0-9]/g, ''));
+                setTimeout(() => {
+                    animateValue(element, 0, endValue, 1000);
+                }, index * 100);
+            });
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(e.target) && 
+                !toggle.contains(e.target) &&
+                sidebar.classList.contains('mobile-show')) {
+                sidebar.classList.remove('mobile-show');
+            }
+        });
+    </script>
+</body>
+</html>
