@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Records - EVetCare</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #2E7D32 0%, #43A047 50%, #66BB6A 100%);
+            --secondary-gradient: linear-gradient(135deg, #1976D2 0%, #2196F3 50%, #42A5F5 100%);
+            --accent-gradient: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+            --sidebar-width: 280px;
+            --text-primary: #263238;
+            --text-secondary: #546E7A;
+            --accent: #FF9800;
+            --accent-light: #FFB74D;
+            --success: #4CAF50;
+            --warning: #FFC107;
+            --danger: #F44336;
+            --info: #2196F3;
+            --light-bg: #F5F7FA;
+            --card-bg: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light-bg);
+            min-height: 100vh;
+            color: var(--text-primary);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: var(--primary-gradient);
+            padding: 32px 24px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            margin-bottom: 48px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo-icon i {
+            font-size: 24px;
+            color: white;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--accent);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-nav-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .sidebar-nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .sidebar-nav-link.active::before {
+            transform: scaleY(1);
+        }
+
+        .sidebar-nav-link i {
+            font-size: 20px;
+            width: 24px;
+        }
+
+        /* User profile section */
+        .user-profile {
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            color: white;
+        }
+
+        .user-info {
+            flex-grow: 1;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 2px;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Main content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 32px;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Header */
+        .page-header {
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* Stats cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon.primary {
+            background: var(--primary-gradient);
+        }
+
+        .stat-icon.secondary {
+            background: var(--secondary-gradient);
+        }
+
+        .stat-icon.accent {
+            background: var(--accent-gradient);
+        }
+
+        .stat-icon.success {
+            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+        }
+
+        .stat-icon i {
+            font-size: 28px;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Table section */
+        .table-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 32px;
+            animation: fadeInUp 0.8s ease-out 0.5s both;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .btn-add-record {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-add-record:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
+        }
+
+        /* Search and filter */
+        .search-filter-container {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            min-width: 200px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: rgba(46, 125, 50, 0.5);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .filter-dropdown {
+            position: relative;
+        }
+
+        .filter-btn {
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: rgba(46, 125, 50, 0.5);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        /* Table styling */
+        .table-custom {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table-custom thead th {
+            background: rgba(46, 125, 50, 0.05);
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .table-custom thead th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .table-custom thead th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        .table-custom tbody td {
+            padding: 20px 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .table-custom tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .table-custom tbody tr:hover {
+            background: rgba(46, 125, 50, 0.03);
+        }
+
+        .table-custom tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .patient-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .patient-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+        }
+
+        .patient-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .patient-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .patient-species {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .diagnosis-text {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .action-btn.view {
+            background: rgba(33, 150, 243, 0.1);
+            color: var(--info);
+        }
+
+        .action-btn.edit {
+            background: rgba(255, 152, 0, 0.1);
+            color: var(--accent);
+        }
+
+        .action-btn.delete {
+            background: rgba(244, 67, 54, 0.1);
+            color: var(--danger);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--primary-gradient);
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .mobile-menu-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
+        }
+
+        /* Responsive design */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .table-section {
+                padding: 20px;
+                overflow-x: auto;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .search-filter-container {
+                flex-direction: column;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: rgba(46, 125, 50, 0.5);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Record details modal */
+        .record-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .notes-section {
+            margin-top: 20px;
+        }
+
+        .notes-text {
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Loading animation */
+        .loading-skeleton {
+            background: linear-gradient(90deg, 
+                rgba(0, 0, 0, 0.05) 25%, 
+                rgba(0, 0, 0, 0.1) 50%, 
+                rgba(0, 0, 0, 0.05) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile menu toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="bi bi-list" style="font-size: 20px;"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-logo">
+                <div class="logo-icon">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                </div>
+                <span class="logo-text">EVetCare</span>
+            </a>
+        </div>
+
+        <nav>
+            <ul class="sidebar-nav">
+                <li>
+                    <a href="dashboard.html" class="sidebar-nav-link">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="patients.html" class="sidebar-nav-link">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Patients</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="appointments.html" class="sidebar-nav-link">
+                        <i class="bi bi-calendar-check-fill"></i>
+                        <span>Appointments</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="medicalrecords.html" class="sidebar-nav-link active">
+                        <i class="bi bi-file-medical-fill"></i>
+                        <span>Medical Records</span>
+                    </a>
+                </li>
+                 <li>
+                    <a href="pharmacy.html" class="sidebar-nav-link active">
+                        <i class="bi bi-prescription2"></i>
+                        <span>Pharmacy</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="analytics.html" class="sidebar-nav-link">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="settings.html" class="sidebar-nav-link">
+                        <i class="bi bi-gear-fill"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="user-profile">
+            <div class="user-avatar">JD</div>
+            <div class="user-info">
+                <div class="user-name">Dr. John Doe</div>
+                <div class="user-role">Administrator</div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+        <!-- Page header -->
+        <header class="page-header">
+            <h1 class="page-title">Medical Records</h1>
+            <p class="page-subtitle">View and manage patient medical records and treatment histories.</p>
+        </header>
+
+        <!-- Stats cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon primary">
+                    <i class="bi bi-file-medical-fill"></i>
+                </div>
+                <div class="stat-value">5,842</div>
+                <div class="stat-label">Total Records</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon secondary">
+                    <i class="bi bi-calendar-plus-fill"></i>
+                </div>
+                <div class="stat-value">28</div>
+                <div class="stat-label">Records Today</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon accent">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <div class="stat-value">124</div>
+                <div class="stat-label">Pending Reviews</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon success">
+                    <i class="bi bi-clipboard-check-fill"></i>
+                </div>
+                <div class="stat-value">92%</div>
+                <div class="stat-label">Completion Rate</div>
+            </div>
+        </div>
+
+        <!-- Records table -->
+        <section class="table-section">
+            <div class="section-header">
+                <h2 class="section-title">Patient Medical Records</h2>
+                <button class="btn-add-record" onclick="openAddRecordModal()">
+                    <i class="bi bi-plus-circle-fill"></i>
+                    Add New Record
+                </button>
+            </div>
+
+            <div class="search-filter-container">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search by patient name, owner, or diagnosis..." id="searchInput">
+                </div>
+                <div class="filter-dropdown">
+                    <button class="filter-btn" id="filterBtn">
+                        <i class="bi bi-funnel-fill"></i>
+                        <span>Filter</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Date</th>
+                            <th>Diagnosis</th>
+                            <th>Treatment</th>
+                            <th>Vet</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsTableBody">
+                        <!-- Table rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add/Edit Record Modal -->
+    <div class="modal-overlay" id="recordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add New Medical Record</h3>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="recordForm">
+                    <div class="form-group">
+                        <label class="form-label">Patient</label>
+                        <select class="form-control form-select" id="patientSelect">
+                            <option value="">Select Patient</option>
+                            <option value="1">Buddy - Dog</option>
+                            <option value="2">Luna - Cat</option>
+                            <option value="3">Charlie - Dog</option>
+                            <option value="4">Lucy - Cat</option>
+                            <option value="5">Max - Dog</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-control" id="recordDate">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Diagnosis</label>
+                        <input type="text" class="form-control" id="diagnosis" placeholder="Enter diagnosis">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Treatment</label>
+                        <input type="text" class="form-control" id="treatment" placeholder="Enter treatment plan">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Prescribed Medication</label>
+                        <input type="text" class="form-control" id="medication" placeholder="Enter prescribed medication">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes" rows="4" placeholder="Additional notes and observations"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveRecord()">Save Record</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Record Modal -->
+    <div class="modal-overlay" id="viewRecordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Medical Record Details</h3>
+                <button class="modal-close" onclick="closeViewModal()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="record-details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Patient</span>
+                        <span class="detail-value" id="viewPatient">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Date</span>
+                        <span class="detail-value" id="viewDate">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Diagnosis</span>
+                        <span class="detail-value" id="viewDiagnosis">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Treatment</span>
+                        <span class="detail-value" id="viewTreatment">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Veterinarian</span>
+                        <span class="detail-value" id="viewVet">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Medication</span>
+                        <span class="detail-value" id="viewMedication">-</span>
+                    </div>
+                </div>
+                <div class="notes-section">
+                    <span class="detail-label">Notes</span>
+                    <div class="notes-text" id="viewNotes">-</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeViewModal()">Close</button>
+                <button class="btn btn-primary" onclick="editFromView()">Edit Record</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-show');
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Mock data for medical records
+        const medicalRecords = [
+            { 
+                id: 1, 
+                patient: 'Buddy', 
+                species: 'Dog',
+                date: '2023-11-15', 
+                diagnosis: 'Skin Allergy',
+                treatment: 'Antihistamine medication',
+                medication: 'Cetirizine 10mg daily',
+                vet: 'Dr. Alice',
+                notes: 'Patient shows improvement after 3 days of treatment. Follow-up in 2 weeks recommended.'
+            },
+            { 
+                id: 2, 
+                patient: 'Luna', 
+                species: 'Cat',
+                date: '2023-11-14', 
+                diagnosis: 'Dental Disease',
+                treatment: 'Dental cleaning and extraction',
+                medication: 'Amoxicillin 250mg twice daily',
+                vet: 'Dr. Bob',
+                notes: 'Extraction of 2 teeth. Owner advised on dental care routine.'
+            },
+            { 
+                id: 3, 
+                patient: 'Charlie', 
+                species: 'Dog',
+                date: '2023-11-13', 
+                diagnosis: 'Ear Infection',
+                treatment: 'Ear drops and cleaning',
+                medication: 'Otomax ear drops twice daily',
+                vet: 'Dr. Alice',
+                notes: 'Left ear more affected than right. Continue treatment for 7 days.'
+            },
+            { 
+                id: 4, 
+                patient: 'Lucy', 
+                species: 'Cat',
+                date: '2023-11-12', 
+                diagnosis: 'Gastroenteritis',
+                treatment: 'IV fluids and medication',
+                medication: 'Metronidazole 15mg/kg twice daily',
+                vet: 'Dr. Carol',
+                notes: 'Patient dehydrated on admission. Responding well to treatment.'
+            },
+            { 
+                id: 5, 
+                patient: 'Max', 
+                species: 'Dog',
+                date: '2023-11-11', 
+                diagnosis: 'Arthritis',
+                treatment: 'Anti-inflammatory medication',
+                medication: 'Carprofen 2mg/kg once daily',
+                vet: 'Dr. Bob',
+                notes: 'Weight management recommended. Joint supplements suggested.'
+            }
+        ];
+
+        // Function to populate the medical records table
+        function populateRecordsTable() {
+            const tableBody = document.getElementById('recordsTableBody');
+            tableBody.innerHTML = '';
+
+            medicalRecords.forEach(record => {
+                const row = `
+                    <tr>
+                        <td>
+                            <div class="patient-info">
+                                <div class="patient-avatar">${record.patient[0]}</div>
+                                <div class="patient-details">
+                                    <span class="patient-name">${record.patient}</span>
+                                    <span class="patient-species">${record.species}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${formatDate(record.date)}</td>
+                        <td>
+                            <div class="diagnosis-text" title="${record.diagnosis}">
+                                ${record.diagnosis}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="diagnosis-text" title="${record.treatment}">
+                                ${record.treatment}
+                            </div>
+                        </td>
+                        <td>${record.vet}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn view" onclick="viewRecord(${record.id})" title="View">
+                                    <i class="bi bi-eye-fill"></i>
+                                </button>
+                                <button class="action-btn edit" onclick="editRecord(${record.id})" title="Edit">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </button>
+                                <button class="action-btn delete" onclick="deleteRecord(${record.id})" title="Delete">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        // Format date function
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Modal functions
+        function openAddRecordModal() {
+            document.getElementById('modalTitle').textContent = 'Add New Medical Record';
+            document.getElementById('recordForm').reset();
+            document.getElementById('recordModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('recordModal').classList.remove('active');
+        }
+
+        function closeViewModal() {
+            document.getElementById('viewRecordModal').classList.remove('active');
+        }
+
+        function saveRecord() {
+            // In a real application, this would save the data to a server
+            alert('Medical record saved successfully!');
+            closeModal();
+            // In a real app, you would refresh the table or add the new record to the list
+        }
+
+        function viewRecord(id) {
+            const record = medicalRecords.find(r => r.id === id);
+            if (record) {
+                document.getElementById('viewPatient').textContent = `${record.patient} (${record.species})`;
+                document.getElementById('viewDate').textContent = formatDate(record.date);
+                document.getElementById('viewDiagnosis').textContent = record.diagnosis;
+                document.getElementById('viewTreatment').textContent = record.treatment;
+                document.getElementById('viewVet').textContent = record.vet;
+                document.getElementById('viewMedication').textContent = record.medication;
+                document.getElementById('viewNotes').textContent = record.notes;
+                
+                document.getElementById('viewRecordModal').classList.add('active');
+            }
+        }
+
+        function editRecord(id) {
+            const record = medicalRecords.find(r => r.id === id);
+            if (record) {
+                document.getElementById('modalTitle').textContent = 'Edit Medical Record';
+                document.getElementById('patientSelect').value = '1'; // In a real app, you'd match the patient
+                document.getElementById('recordDate').value = record.date;
+                document.getElementById('diagnosis').value = record.diagnosis;
+                document.getElementById('treatment').value = record.treatment;
+                document.getElementById('medication').value = record.medication;
+                document.getElementById('notes').value = record.notes;
+                
+                document.getElementById('recordModal').classList.add('active');
+            }
+        }
+
+        function editFromView() {
+            closeViewModal();
+            // In a real application, you would get the ID from the view modal
+            editRecord(1); // Using a sample ID
+        }
+
+        function deleteRecord(id) {
+            if (confirm('Are you sure you want to delete this medical record?')) {
+                // In a real application, this would delete the record from the server
+                alert('Medical record deleted successfully!');
+                // In a real app, you would refresh the table or remove the record from the list
+            }
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#recordsTableBody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            populateRecordsTable();
+            
+            // Set today's date as default in the form
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('recordDate').value = today;
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(e.target) && 
+                !toggle.contains(e.target) &&
+                sidebar.classList.contains('mobile-show')) {
+                sidebar.classList.remove('mobile-show');
+            }
+        });
+
+        // Close modals when clicking outside
+        document.getElementById('recordModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                closeModal();
+            }
+        });
+
+        document.getElementById('viewRecordModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                closeViewModal();
+            }
+        });
+    </script>
+</body>
+</html>

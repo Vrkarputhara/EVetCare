@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - EVetCare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #2e7d32, #4caf50);
+            --secondary-gradient: linear-gradient(135deg, #1976d2, #42a5f5);
+            --accent-gradient: linear-gradient(135deg, #ff9800, #ffb74d);
+            --danger-gradient: linear-gradient(135deg, #f44336, #ef5350);
+            --success-gradient: linear-gradient(135deg, #4caf50, #81c784);
+            --card-bg: #ffffff;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --sidebar-bg: #f8f9fa;
+            --sidebar-hover: #e8f5e9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-logo:hover .logo-icon {
+            transform: scale(1.05);
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 4px;
+        }
+
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 24px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .sidebar-nav-link:hover {
+            background: var(--sidebar-hover);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav-link.active {
+            background: var(--sidebar-hover);
+            color: #2e7d32;
+        }
+
+        .sidebar-nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--primary-gradient);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .sidebar-nav-link i {
+            font-size: 20px;
+            width: 24px;
+        }
+
+        .user-profile {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--secondary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .logout-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(244, 67, 54, 0.1);
+            color: #f44336;
+        }
+
+        /* Main content */
+        .main-content {
+            margin-left: 280px;
+            padding: 32px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* Settings layout */
+        .settings-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 32px;
+        }
+
+        /* Settings sidebar */
+        .settings-sidebar {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            height: fit-content;
+            position: sticky;
+            top: 32px;
+        }
+
+        .settings-menu {
+            list-style: none;
+        }
+
+        .settings-menu li {
+            margin-bottom: 4px;
+        }
+
+        .settings-menu-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .settings-menu-link:hover {
+            background: rgba(46, 125, 50, 0.05);
+            color: var(--text-primary);
+        }
+
+        .settings-menu-link.active {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .settings-menu-link i {
+            font-size: 18px;
+            width: 20px;
+        }
+
+        /* Settings content */
+        .settings-content {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .settings-section {
+            display: none;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .settings-section.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .section-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Form styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: rgba(46, 125, 50, 0.5);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Switch */
+        .form-switch {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .form-switch:last-child {
+            border-bottom: none;
+        }
+
+        .switch-label {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .switch-description {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .switch-input {
+            position: relative;
+            width: 48px;
+            height: 24px;
+        }
+
+        .switch-input input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .switch-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .switch-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .switch-slider {
+            background: var(--primary-gradient);
+        }
+
+        input:checked + .switch-slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-danger {
+            background: var(--danger-gradient);
+            color: white;
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(244, 67, 54, 0.4);
+        }
+
+        /* Profile section */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 20px;
+            background: var(--secondary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .avatar-upload {
+            position: absolute;
+            bottom: -8px;
+            right: -8px;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .avatar-upload:hover {
+            transform: scale(1.1);
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .profile-email {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Security items */
+        .security-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .security-item:hover {
+            border-color: rgba(46, 125, 50, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .security-info {
+            flex: 1;
+        }
+
+        .security-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .security-description {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .security-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .security-status.active {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4caf50;
+        }
+
+        .security-status.warning {
+            background: rgba(255, 152, 0, 0.1);
+            color: #ff9800;
+        }
+
+        /* Notification preferences */
+        .notification-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-info {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .notification-description {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--primary-gradient);
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .mobile-menu-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
+        }
+
+        /* Responsive design */
+        @media (max-width: 1024px) {
+            .settings-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .settings-sidebar {
+                position: static;
+                margin-bottom: 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .settings-content {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile menu toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="bi bi-list" style="font-size: 20px;"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-logo">
+                <div class="logo-icon">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                </div>
+                <span class="logo-text">EVetCare</span>
+            </a>
+        </div>
+
+        <nav>
+            <ul class="sidebar-nav">
+                <li>
+                    <a href="dashboard.html" class="sidebar-nav-link">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="patients.html" class="sidebar-nav-link">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Patients</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="appointments.html" class="sidebar-nav-link">
+                        <i class="bi bi-calendar-check-fill"></i>
+                        <span>Appointments</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="medicalrecords.html" class="sidebar-nav-link">
+                        <i class="bi bi-file-medical-fill"></i>
+                        <span>Medical Records</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="pharmacy.html" class="sidebar-nav-link">
+                        <i class="bi bi-prescription2"></i>
+                        <span>Pharmacy</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="analytics.html" class="sidebar-nav-link">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="settings.html" class="sidebar-nav-link active">
+                        <i class="bi bi-gear-fill"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="user-profile">
+            <div class="user-avatar">JD</div>
+            <div class="user-info">
+                <div class="user-name">Dr. John Doe</div>
+                <div class="user-role">Administrator</div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+        <!-- Page header -->
+        <header class="page-header">
+            <h1 class="page-title">Settings</h1>
+            <p class="page-subtitle">Manage your account settings and preferences.</p>
+        </header>
+
+        <!-- Settings layout -->
+        <div class="settings-layout">
+            <!-- Settings sidebar -->
+            <aside class="settings-sidebar">
+                <ul class="settings-menu">
+                    <li>
+                        <a href="#" class="settings-menu-link active" onclick="showSection('profile', this)">
+                            <i class="bi bi-person-fill"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="settings-menu-link" onclick="showSection('account', this)">
+                            <i class="bi bi-shield-fill"></i>
+                            <span>Account</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="settings-menu-link" onclick="showSection('security', this)">
+                            <i class="bi bi-lock-fill"></i>
+                            <span>Security</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="settings-menu-link" onclick="showSection('notifications', this)">
+                            <i class="bi bi-bell-fill"></i>
+                            <span>Notifications</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="settings-menu-link" onclick="showSection('clinic', this)">
+                            <i class="bi bi-building"></i>
+                            <span>Clinic</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="settings-menu-link" onclick="showSection('billing', this)">
+                            <i class="bi bi-credit-card-fill"></i>
+                            <span>Billing</span>
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+
+            <!-- Settings content -->
+            <div class="settings-content">
+                <!-- Profile Section -->
+                <section class="settings-section active" id="profile-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Profile Information</h2>
+                        <p class="section-description">Update your personal information and profile details.</p>
+                    </div>
+
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            JD
+                            <div class="avatar-upload">
+                                <i class="bi bi-camera-fill"></i>
+                            </div>
+                        </div>
+                        <div class="profile-info">
+                            <div class="profile-name">Dr. John Doe</div>
+                            <div class="profile-email">john.doe@evetcare.com</div>
+                        </div>
+                    </div>
+
+                    <form>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-control" value="John">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-control" value="Doe">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" value="john.doe@evetcare.com">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" value="+1 (555) 123-4567">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Department</label>
+                                <select class="form-control form-select">
+                                    <option>General Practice</option>
+                                    <option>Surgery</option>
+                                    <option>Dentistry</option>
+                                    <option>Dermatology</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">License Number</label>
+                                <input type="text" class="form-control" value="VET123456">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Bio</label>
+                            <textarea class="form-control form-textarea" rows="4">Experienced veterinarian with over 10 years of practice in small animal care. Specialized in internal medicine and emergency care.</textarea>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary" onclick="saveProfile()">
+                                <i class="bi bi-check-circle-fill"></i>
+                                Save Changes
+                            </button>
+                            <button type="button" class="btn btn-secondary">
+                                <i class="bi bi-arrow-clockwise"></i>
+                                Reset
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Account Section -->
+                <section class="settings-section" id="account-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Account Settings</h2>
+                        <p class="section-description">Manage your account preferences and language settings.</p>
+                    </div>
+
+                    <form>
+                        <div class="form-group">
+                            <label class="form-label">Language</label>
+                            <select class="form-control form-select">
+                                <option>English</option>
+                                <option>Spanish</option>
+                                <option>French</option>
+                                <option>German</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Timezone</label>
+                            <select class="form-control form-select">
+                                <option>UTC-05:00 Eastern Time</option>
+                                <option>UTC-06:00 Central Time</option>
+                                <option>UTC-07:00 Mountain Time</option>
+                                <option>UTC-08:00 Pacific Time</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Date Format</label>
+                            <select class="form-control form-select">
+                                <option>MM/DD/YYYY</option>
+                                <option>DD/MM/YYYY</option>
+                                <option>YYYY-MM-DD</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Currency</label>
+                            <select class="form-control form-select">
+                                <option>USD ($)</option>
+                                <option>EUR (€)</option>
+                                <option>GBP (£)</option>
+                                <option>CAD ($)</option>
+                            </select>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary" onclick="saveAccount()">
+                                <i class="bi bi-check-circle-fill"></i>
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Security Section -->
+                <section class="settings-section" id="security-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Security Settings</h2>
+                        <p class="section-description">Manage your password and authentication preferences.</p>
+                    </div>
+
+                    <div class="security-item">
+                        <div class="security-info">
+                            <div class="security-title">Password</div>
+                            <div class="security-description">Last changed 30 days ago</div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="changePassword()">Change</button>
+                    </div>
+
+                    <div class="security-item">
+                        <div class="security-info">
+                            <div class="security-title">Two-Factor Authentication</div>
+                            <div class="security-description">Add an extra layer of security to your account</div>
+                        </div>
+                        <span class="security-status warning">Disabled</span>
+                    </div>
+
+                    <div class="security-item">
+                        <div class="security-info">
+                            <div class="security-title">Active Sessions</div>
+                            <div class="security-description">Manage your active login sessions</div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="viewSessions()">View</button>
+                    </div>
+
+                    <div class="security-item">
+                        <div class="security-info">
+                            <div class="security-title">Login Alerts</div>
+                            <div class="security-description">Get notified when someone logs into your account</div>
+                        </div>
+                        <label class="switch-input">
+                            <input type="checkbox" checked>
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary" onclick="saveSecurity()">
+                            <i class="bi bi-check-circle-fill"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Notifications Section -->
+                <section class="settings-section" id="notifications-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Notification Preferences</h2>
+                        <p class="section-description">Choose how you want to receive notifications.</p>
+                    </div>
+
+                    <div class="notification-item">
+                        <div class="notification-info">
+                            <div class="notification-title">Email Notifications</div>
+                            <div class="notification-description">Receive updates and alerts via email</div>
+                        </div>
+                        <label class="switch-input">
+                            <input type="checkbox" checked>
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="notification-item">
+                        <div class="notification-info">
+                            <div class="notification-title">SMS Notifications</div>
+                            <div class="notification-description">Receive important updates via text message</div>
+                        </div>
+                        <label class="switch-input">
+                            <input type="checkbox">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="notification-item">
+                        <div class="notification-info">
+                            <div class="notification-title">Appointment Reminders</div>
+                            <div class="notification-description">Get reminded about upcoming appointments</div>
+                        </div>
+                        <label class="switch-input">
+                            <input type="checkbox" checked>
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="notification-item">
+                        <div class="notification-info">
+                            <div class="notification-title">Patient Updates</div>
+                            <div class="notification-description">Notifications about patient record changes</div>
+                        </div>
+                        <label class="switch-input">
+                            <input type="checkbox" checked>
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="notification-item">
+                        <div class="notification-info">
+                            <div class="notification-title">System Updates</div>
+                            <div class="notification-description">Stay informed about system maintenance and updates</div>
+                        </div>
+                        <label class="switch-input">
+                            <input type="checkbox">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary" onclick="saveNotifications()">
+                            <i class="bi bi-check-circle-fill"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Clinic Section -->
+                <section class="settings-section" id="clinic-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Clinic Information</h2>
+                        <p class="section-description">Update your clinic details and operating hours.</p>
+                    </div>
+
+                    <form>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Clinic Name</label>
+                                <input type="text" class="form-control" value="EVetCare Animal Hospital">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" value="+1 (555) 987-6543">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" value="info@evetcare.com">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Website</label>
+                                <input type="url" class="form-control" value="www.evetcare.com">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Address</label>
+                            <input type="text" class="form-control" value="123 Main Street, City, State 12345">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Operating Hours</label>
+                            <textarea class="form-control form-textarea" rows="3">Monday - Friday: 8:00 AM - 8:00 PM
+Saturday: 9:00 AM - 5:00 PM
+Sunday: 10:00 AM - 4:00 PM</textarea>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary" onclick="saveClinic()">
+                                <i class="bi bi-check-circle-fill"></i>
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Billing Section -->
+                <section class="settings-section" id="billing-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Billing & Subscription</h2>
+                        <p class="section-description">Manage your subscription plan and payment methods.</p>
+                    </div>
+
+                    <div class="security-item">
+                        <div class="security-info">
+                            <div class="security-title">Current Plan</div>
+                            <div class="security-description">Professional Plan - $99/month</div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="upgradePlan()">Upgrade</button>
+                    </div>
+
+                    <div class="security-item">
+                        <div class="security-info">
+                            <div class="security-title">Payment Method</div>
+                            <div class="security-description">Visa ending in 4242</div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="updatePayment()">Update</button>
+                    </div>
+
+                    <div class="security-item">
+                        <div class="security-info">
+                            <div class="security-title">Next Billing Date</div>
+                            <div class="security-description">December 15, 2023</div>
+                        </div>
+                        <span class="security-status active">Active</span>
+                    </div>
+
+                    <div class="security-item">
+                        <div class="security-info">
+                            <div class="security-title">Invoices</div>
+                            <div class="security-description">Download and view your billing invoices</div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="viewInvoices()">View Invoices</button>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-danger" onclick="cancelSubscription()">
+                            <i class="bi bi-x-circle-fill"></i>
+                            Cancel Subscription
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-show');
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Show settings section
+        function showSection(section, element) {
+            // Hide all sections
+            document.querySelectorAll('.settings-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+
+            // Remove active class from all links
+            document.querySelectorAll('.settings-menu-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(section + '-section').classList.add('active');
+            element.classList.add('active');
+        }
+
+        // Save functions
+        function saveProfile() {
+            alert('Profile information saved successfully!');
+        }
+
+        function saveAccount() {
+            alert('Account settings saved successfully!');
+        }
+
+        function saveSecurity() {
+            alert('Security settings saved successfully!');
+        }
+
+        function saveNotifications() {
+            alert('Notification preferences saved successfully!');
+        }
+
+        function saveClinic() {
+            alert('Clinic information saved successfully!');
+        }
+
+        // Other functions
+        function changePassword() {
+            alert('Redirecting to password change page...');
+        }
+
+        function viewSessions() {
+            alert('Loading active sessions...');
+        }
+
+        function upgradePlan() {
+            alert('Redirecting to plan upgrade page...');
+        }
+
+        function updatePayment() {
+            alert('Redirecting to payment method update page...');
+        }
+
+        function viewInvoices() {
+            alert('Loading invoices...');
+        }
+
+        function cancelSubscription() {
+            if (confirm('Are you sure you want to cancel your subscription? This action cannot be undone.')) {
+                alert('Subscription cancellation request submitted. You will receive a confirmation email shortly.');
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Settings are already initialized
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(e.target) && 
+                !toggle.contains(e.target) &&
+                sidebar.classList.contains('mobile-show')) {
+                sidebar.classList.remove('mobile-show');
+            }
+        });
+    </script>
+</body>
+</html>

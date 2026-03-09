@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - EVetCare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #2e7d32, #4caf50);
+            --secondary-gradient: linear-gradient(135deg, #1976d2, #42a5f5);
+            --accent-gradient: linear-gradient(135deg, #ff9800, #ffb74d);
+            --danger-gradient: linear-gradient(135deg, #f44336, #ef5350);
+            --success-gradient: linear-gradient(135deg, #4caf50, #81c784);
+            --card-bg: #ffffff;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --sidebar-bg: #f8f9fa;
+            --sidebar-hover: #e8f5e9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--sidebar-bg);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-logo:hover .logo-icon {
+            transform: scale(1.05);
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 4px;
+        }
+
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 24px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .sidebar-nav-link:hover {
+            background: var(--sidebar-hover);
+            color: var(--text-primary);
+        }
+
+        .sidebar-nav-link.active {
+            background: var(--sidebar-hover);
+            color: #2e7d32;
+        }
+
+        .sidebar-nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--primary-gradient);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .sidebar-nav-link i {
+            font-size: 20px;
+            width: 24px;
+        }
+
+        .user-profile {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--secondary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .logout-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: rgba(244, 67, 54, 0.1);
+            color: #f44336;
+        }
+
+        /* Main content */
+        .main-content {
+            margin-left: 280px;
+            padding: 32px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* Date range selector */
+        .date-range-container {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .date-range-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: white;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .date-range-btn:hover {
+            border-color: rgba(46, 125, 50, 0.5);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        .date-range-btn.active {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        /* Stats grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .stat-icon.primary {
+            background: var(--primary-gradient);
+        }
+
+        .stat-icon.secondary {
+            background: var(--secondary-gradient);
+        }
+
+        .stat-icon.accent {
+            background: var(--accent-gradient);
+        }
+
+        .stat-icon.success {
+            background: var(--success-gradient);
+        }
+
+        .stat-icon.danger {
+            background: var(--danger-gradient);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        .stat-change.positive {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4caf50;
+        }
+
+        .stat-change.negative {
+            background: rgba(244, 67, 54, 0.1);
+            color: #f44336;
+        }
+
+        /* Charts grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .chart-options {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chart-option-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chart-option-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--text-primary);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Full width chart */
+        .chart-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .chart-card.full-width .chart-container {
+            height: 400px;
+        }
+
+        /* Table section */
+        .table-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 32px;
+            animation: fadeInUp 0.8s ease-out 0.5s both;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .export-btn {
+            background: var(--secondary-gradient);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(25, 118, 210, 0.4);
+        }
+
+        /* Table styling */
+        .table-custom {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table-custom thead th {
+            background: rgba(46, 125, 50, 0.05);
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .table-custom thead th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        .table-custom thead th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        .table-custom tbody td {
+            padding: 20px 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .table-custom tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .table-custom tbody tr:hover {
+            background: rgba(46, 125, 50, 0.03);
+        }
+
+        .table-custom tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .performance-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .performance-badge.excellent {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4caf50;
+        }
+
+        .performance-badge.good {
+            background: rgba(33, 150, 243, 0.1);
+            color: #2196f3;
+        }
+
+        .performance-badge.average {
+            background: rgba(255, 152, 0, 0.1);
+            color: #ff9800;
+        }
+
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--primary-gradient);
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .mobile-menu-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
+        }
+
+        /* Responsive design */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .table-section {
+                padding: 20px;
+                overflow-x: auto;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .date-range-container {
+                flex-direction: column;
+            }
+
+            .date-range-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile menu toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="bi bi-list" style="font-size: 20px;"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-logo">
+                <div class="logo-icon">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                </div>
+                <span class="logo-text">EVetCare</span>
+            </a>
+        </div>
+
+        <nav>
+            <ul class="sidebar-nav">
+                <li>
+                    <a href="dashboard.html" class="sidebar-nav-link">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="patients.html" class="sidebar-nav-link">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Patients</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="appointments.html" class="sidebar-nav-link">
+                        <i class="bi bi-calendar-check-fill"></i>
+                        <span>Appointments</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="medicalrecords.html" class="sidebar-nav-link">
+                        <i class="bi bi-file-medical-fill"></i>
+                        <span>Medical Records</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="pharmacy.html" class="sidebar-nav-link">
+                        <i class="bi bi-prescription2"></i>
+                        <span>Pharmacy</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="analytics.html" class="sidebar-nav-link active">
+                        <i class="bi bi-graph-up"></i>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="settings.html" class="sidebar-nav-link">
+                        <i class="bi bi-gear-fill"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="user-profile">
+            <div class="user-avatar">JD</div>
+            <div class="user-info">
+                <div class="user-name">Dr. John Doe</div>
+                <div class="user-role">Administrator</div>
+            </div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+        <!-- Page header -->
+        <header class="page-header">
+            <h1 class="page-title">Analytics</h1>
+            <p class="page-subtitle">Comprehensive insights and performance metrics.</p>
+        </header>
+
+        <!-- Date range selector -->
+        <div class="date-range-container">
+            <button class="date-range-btn" onclick="selectDateRange(this, 'today')">Today</button>
+            <button class="date-range-btn" onclick="selectDateRange(this, 'week')">This Week</button>
+            <button class="date-range-btn active" onclick="selectDateRange(this, 'month')">This Month</button>
+            <button class="date-range-btn" onclick="selectDateRange(this, 'quarter')">This Quarter</button>
+            <button class="date-range-btn" onclick="selectDateRange(this, 'year')">This Year</button>
+        </div>
+
+        <!-- Stats cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon primary">
+                        <i class="bi bi-currency-dollar"></i>
+                    </div>
+                </div>
+                <div class="stat-value">$124,580</div>
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-change positive">
+                    <i class="bi bi-arrow-up"></i> 18.2% from last month
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon secondary">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                </div>
+                <div class="stat-value">1,842</div>
+                <div class="stat-label">Total Patients</div>
+                <div class="stat-change positive">
+                    <i class="bi bi-arrow-up"></i> 12.5% from last month
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon accent">
+                        <i class="bi bi-calendar-check-fill"></i>
+                    </div>
+                </div>
+                <div class="stat-value">892</div>
+                <div class="stat-label">Appointments</div>
+                <div class="stat-change positive">
+                    <i class="bi bi-arrow-up"></i> 8.3% from last month
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon success">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                </div>
+                <div class="stat-value">4.8</div>
+                <div class="stat-label">Average Rating</div>
+                <div class="stat-change positive">
+                    <i class="bi bi-arrow-up"></i> 0.3 from last month
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Revenue Trend</h3>
+                    <div class="chart-options">
+                        <button class="chart-option-btn">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Patient Visits</h3>
+                    <div class="chart-options">
+                        <button class="chart-option-btn">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="visitsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Service Distribution</h3>
+                    <div class="chart-options">
+                        <button class="chart-option-btn">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="servicesChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Treatment Success Rate</h3>
+                    <div class="chart-options">
+                        <button class="chart-option-btn">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="successChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full width chart -->
+        <div class="chart-card full-width">
+            <div class="chart-header">
+                <h3 class="chart-title">Performance Overview</h3>
+                <div class="chart-options">
+                    <button class="chart-option-btn">
+                        <i class="bi bi-three-dots"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Performance table -->
+        <section class="table-section">
+            <div class="section-header">
+                <h2 class="section-title">Top Performing Services</h2>
+                <button class="export-btn" onclick="exportData()">
+                    <i class="bi bi-download"></i>
+                    Export Report
+                </button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Patients</th>
+                            <th>Revenue</th>
+                            <th>Growth</th>
+                            <th>Performance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>General Checkup</td>
+                            <td>342</td>
+                            <td>$34,200</td>
+                            <td>+12.5%</td>
+                            <td><span class="performance-badge excellent">Excellent</span></td>
+                        </tr>
+                        <tr>
+                            <td>Vaccination</td>
+                            <td>289</td>
+                            <td>$28,900</td>
+                            <td>+8.3%</td>
+                            <td><span class="performance-badge excellent">Excellent</span></td>
+                        </tr>
+                        <tr>
+                            <td>Dental Care</td>
+                            <td>156</td>
+                            <td>$46,800</td>
+                            <td>+15.2%</td>
+                            <td><span class="performance-badge good">Good</span></td>
+                        </tr>
+                        <tr>
+                            <td>Surgery</td>
+                            <td>89</td>
+                            <td>$89,000</td>
+                            <td>+6.8%</td>
+                            <td><span class="performance-badge good">Good</span></td>
+                        </tr>
+                        <tr>
+                            <td>Emergency Care</td>
+                            <td>234</td>
+                            <td>$58,500</td>
+                            <td>+3.2%</td>
+                            <td><span class="performance-badge average">Average</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-show');
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Date range selection
+        function selectDateRange(btn, range) {
+            document.querySelectorAll('.date-range-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // In a real application, this would update the charts based on the selected range
+            console.log('Selected range:', range);
+            updateCharts(range);
+        }
+
+        // Export data function
+        function exportData() {
+            alert('Exporting analytics report...');
+            // In a real application, this would generate and download a report
+        }
+
+        // Chart configurations
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        display: true,
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        };
+
+        // Initialize Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        const revenueChart = new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Revenue',
+                    data: [65000, 72000, 68000, 85000, 92000, 124580],
+                    borderColor: '#4caf50',
+                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: chartOptions
+        });
+
+        // Initialize Visits Chart
+        const visitsCtx = document.getElementById('visitsChart').getContext('2d');
+        const visitsChart = new Chart(visitsCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Patient Visits',
+                    data: [45, 52, 48, 65, 72, 58, 42],
+                    backgroundColor: 'rgba(33, 150, 243, 0.8)',
+                    borderRadius: 8
+                }]
+            },
+            options: chartOptions
+        });
+
+        // Initialize Services Chart
+        const servicesCtx = document.getElementById('servicesChart').getContext('2d');
+        const servicesChart = new Chart(servicesCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Checkup', 'Vaccination', 'Surgery', 'Dental', 'Emergency'],
+                datasets: [{
+                    data: [30, 25, 15, 20, 10],
+                    backgroundColor: [
+                        '#4caf50',
+                        '#2196f3',
+                        '#ff9800',
+                        '#9c27b0',
+                        '#f44336'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Initialize Success Chart
+        const successCtx = document.getElementById('successChart').getContext('2d');
+        const successChart = new Chart(successCtx, {
+            type: 'radar',
+            data: {
+                labels: ['Diagnosis', 'Treatment', 'Recovery', 'Follow-up', 'Prevention'],
+                datasets: [{
+                    label: 'Success Rate',
+                    data: [95, 88, 92, 85, 90],
+                    borderColor: '#4caf50',
+                    backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                }
+            }
+        });
+
+        // Initialize Performance Chart
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(performanceCtx, {
+            type: 'line',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [{
+                    label: 'Patients',
+                    data: [180, 220, 195, 247],
+                    borderColor: '#4caf50',
+                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4
+                }, {
+                    label: 'Revenue',
+                    data: [18000, 22000, 19500, 24700],
+                    borderColor: '#2196f3',
+                    backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4
+                }, {
+                    label: 'Appointments',
+                    data: [150, 185, 165, 202],
+                    borderColor: '#ff9800',
+                    backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: true,
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Update charts based on date range
+        function updateCharts(range) {
+            // In a real application, this would fetch new data based on the selected range
+            // For demo purposes, we'll just animate the charts
+            [revenueChart, visitsChart, servicesChart, successChart, performanceChart].forEach(chart => {
+                chart.update('active');
+            });
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Charts are already initialized above
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(e.target) && 
+                !toggle.contains(e.target) &&
+                sidebar.classList.contains('mobile-show')) {
+                sidebar.classList.remove('mobile-show');
+            }
+        });
+    </script>
+</body>
+</html>
